@@ -45,11 +45,11 @@ router.get('/:code', async function (req, res, next) {
 router.post('/', async function (req, res, next) {
     try {
         let{ code, name, description } = req.body
-        code = code.toLowerCase()
         
         if (!code || !name || !description) {
             throw new ExpressError(`needs a code, name and description ${code}`, 404)
         }
+        code = code.toLowerCase()
         const newcompany = await db.query(`
         INSERT INTO companies (code, name, description)
          VALUES ($1, $2, $3)

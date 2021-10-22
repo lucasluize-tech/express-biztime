@@ -7,12 +7,12 @@ const db = require('../db')
 
 let testInvoice;
 let testComp;
-
+let comp;
 
 
 beforeEach(async ()=> {
     await db.query("DELETE FROM companies")
-    const comp = await db.query("INSERT INTO companies (code,name, description) VALUES ('pinard','Pinard Nursery','Helping kids rule the World') RETURNING code, name, description")
+    comp = await db.query("INSERT INTO companies (code,name, description) VALUES ('pinard','Pinard Nursery','Helping kids rule the World') RETURNING code, name, description")
   
     testComp = comp.rows[0]
     
@@ -35,9 +35,14 @@ describe('/GET route', function () {
     
     test("get single company with code", async () => {
         const res = await request(app).get(`/companies/${testComp.code}`)
+        const invResults = await db.query("SELECT * FROM invoices WHERE comp_code=$1", [testComp.code])
         
+        testComp.invoices = invResults.rows[0]
+        let { code, name, description, invoices } = testComp
+        let ind = comp.rows.map(r => r.industry)
+        ind[0] = null
         expect(res.statusCode).toBe(200)
-        expect(res.body).toEqual({company : testComp, invoices: []})
+        expect(res.body).toEqual({ company: code, name, description, ind})
     })
 })
   
