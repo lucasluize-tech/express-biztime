@@ -1,0 +1,4 @@
+# Question for this unit:
+
+1. regarding testing, tests seems to be working, but they fail because the date type when dealing with the API is different than the date type when retrieving from the database with pg.
+API will return a STRING type , while pg returns a date type.
